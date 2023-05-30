@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>العملاء</title>
+    <title>الطلبات المقبولة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
     <link rel="stylesheet" href="./css/framework.css" />
     <link rel="stylesheet" href="./css/master.css" />
@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap" rel="stylesheet" />
 
 
-    <link rel="icon" type="image/x-icon" href="./imgs/pubg icon.png">
+    <link rel="icon" type="image/x-icon" href="./imgs/logo.png">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment-precise-range-plugin@1.3.0/moment-precise-range.js"></script>
@@ -152,7 +152,7 @@
         <!-- Start Head -->
         <div class="head bg-white between-flex" style="padding: 0px 10px 15px; background: #f1f5f9;">
           <div class="p-relative">
-            <h1 class="p-relative" style="text-align: center;">العملاء</h1>
+            <h1 class="p-relative" style="text-align: center;">الطلبات المقبولة</h1>
           </div>
         </div>
         <!-- End Head -->
@@ -554,7 +554,7 @@ let SearchInput = document.querySelector(".SearchInput").value;
 SearchField=SearchField.trim();
 SearchInput=SearchInput.trim();
 
-console.log(SearchField,SearchInput);
+// console.log(SearchField,SearchInput);
 
 if(SearchField!==""&&SearchField!=="SearchInput"){
 
@@ -624,6 +624,10 @@ async function showData(x){
 
         <a>
           <i title="تفاصيل الطلب" class="fa-sharp fa-solid fa-circle-info Order-Note" data-id="${el.id}" data-note="${el.note}" style="font-size: 25px; color: #233245; background: white; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
+        </a>
+
+        <a>
+          <i title="الملفات" class="fa-sharp fa-solid fa-file Order-file" data-id="${el.id}" data-file='${JSON.stringify(el.ArrayOfOrderFilesLinks)}' style="font-size: 25px; color: #233245; background: white; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
         </a>
 
 
@@ -727,7 +731,7 @@ window.onclick=(e)=>{
 /* start order detals btn*/
 if([...e.target.classList].includes("OrderFromStore")){
   let arrayOfProducts = JSON.parse(e.target.dataset.store);
-  console.log(arrayOfProducts);
+  // console.log(arrayOfProducts);
   const div = document.createElement("div");
   let totalPrice=0;
   div.innerHTML=`<div class="shopping-cart">
@@ -788,6 +792,32 @@ if([...e.target.classList].includes("OrderFromStore")){
 
 
 
+/* start order file btn*/
+if([...e.target.classList].includes("Order-file")){
+  let orderId=e.target.dataset.id;
+  let orderData=AllPersonsData.find(el=>el.id==`${orderId}`);
+  let ArrayOfOrderFilesLinks=orderData.ArrayOfOrderFilesLinks;
+
+  // console.log(ArrayOfOrderFilesLinks)
+
+
+  let div = document.createElement("div")
+
+  for(let i=0; i<ArrayOfOrderFilesLinks.length; i++){
+    div.innerHTML+=`
+      <a style="font-size: 30px;" href="${ArrayOfOrderFilesLinks[i].src}" target="_blank">file ${i+1}<a/>
+      <br>
+    `;
+  }
+  
+  
+  Swal.fire({
+    title: 'جميع الملفات',
+    html: div,
+    confirmButtonText: 'Ok',
+  })
+}
+/* end order file btn*/
 
 
 
@@ -831,7 +861,7 @@ if([...e.target.classList].includes("Order-Active-Note")){
 if([...e.target.classList].includes("acceptOrder")){
 
 Swal.fire({
-title: 'Are you Want To Accept It?',
+title: 'هل تريد تحويل الطلب ل الطلبات المقبولة مبدئيا',
 text: "",
 icon: 'warning',
 showCancelButton: true,
@@ -846,7 +876,7 @@ confirmButtonText: 'Yes, Accept it!'
 
     setDoc(doc(db,"Orders",orderId),{
       ...orderData,
-      isAccepted: true,
+      isAccepted: "Accepted-0",
     });
 
     e.target.parentNode.parentNode.parentNode.remove();
@@ -855,7 +885,7 @@ confirmButtonText: 'Yes, Accept it!'
 
     Swal.fire(
       'Accepted!',
-      'Your Order has been Accepted.',
+      'تم التحويل',
       'success'
     );
 
@@ -1026,10 +1056,10 @@ function swool(orderData){
         <input type="number" class="addOrderInput"  placeholder="" dir="auto" autocomplete="off" id="phone" value="${orderData.phone}">
 
         <label for="totalSalary">:اجمالي الراتب</label>
-        <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="totalSalary" value="${orderData.totalSalary}">
+        <input type="number" class="addOrderInput"  dir="rtl" autocomplete="off" id="totalSalary" value="${orderData.totalSalary}">
 
         <label for="netSalary">:صافي الراتب</label>
-        <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="netSalary" value="${orderData.netSalary}">
+        <input type="number" class="addOrderInput"  dir="rtl" autocomplete="off" id="netSalary" value="${orderData.netSalary}">
 
         <label for="bankName">:البنك</label>
         <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="bankName" value="${orderData.bankName}">
@@ -1091,7 +1121,17 @@ function swool(orderData){
 
         <label for="note">:الملاحظة</label>
         <textarea type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="note"  rows="4" style="width: 98%; border: 2px solid black; border-radius: 6px;">${orderData.note}</textarea>
+        
+        <br><br>
 
+        <label for="OrderFilesInput" class="OrderFilesInputLabel" style="border: none;border-radius: 20px;background: green;color: white;padding: 5px 15px;cursor: pointer;"> قم باختيار الملفات </label>
+        <input style="width: 98%; display: none;" class="addOrderInput" accept="" type="file" dir="rtl" autocomplete="off" id="OrderFilesInput" multiple="multiple">
+
+        <br><br>
+
+
+        <div class="OrderFilesUploadDad" style="background: black; display: none; overflow:scroll; max-height: 250px; border: 2px solid black; border-radius: 6px; padding: 5px;">
+        
 
 
 </div>
@@ -1099,7 +1139,7 @@ function swool(orderData){
       
       `,
       confirmButtonText: 'حفظ',
-  }).then((result) => {    
+  }).then(async (result) => {    
       if (result.isConfirmed) {
 
           
@@ -1115,57 +1155,77 @@ function swool(orderData){
         let Q3=document.querySelector("#Q3").value;
         let note=document.querySelector("#note").value;
 
+        let OrderFilesInput = document.querySelector("#OrderFilesInput");
 
 
-          SetData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note);
-
-          function SetData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note){
-            setDoc(doc(db,"Orders",orderData.id), {
-              ...orderData,
-              name: name,
-              city: city,
-              phone: phone,
-              totalSalary: totalSalary,
-              netSalary: netSalary,
-              bankName: bankName,
-              sector: sector,
-              Q1: Q1,
-              Q2: Q2,
-              Q3: Q3,
-              note: note,
-              isAccepted: orderData.isAccepted,
-            }).then(async (e)=>{
-              let mainEditedDiv = document.querySelector(`[data-id="${orderData.id}"]`)
-              mainEditedDiv.querySelector(".Order-Name").textContent=name;
-              mainEditedDiv.querySelector(".Order-Phone").textContent=phone;
-              mainEditedDiv.querySelector(".whatsappLink").href=`http://wa.me/+966${phone}`;
-              mainEditedDiv.querySelector(".Order-City").textContent=city;
-              mainEditedDiv.querySelector(".Toltal-Salary").textContent=totalSalary;
-              mainEditedDiv.querySelector(".Net-Salary").textContent=netSalary;
-              mainEditedDiv.querySelector(".Bank-Name").textContent=bankName;
-              mainEditedDiv.querySelector(".Sector").textContent=sector;
-              mainEditedDiv.querySelector(".Q1").textContent=Q1;
-              mainEditedDiv.querySelector(".Q2").textContent=Q2;
-              mainEditedDiv.querySelector(".Q3").textContent=Q3;
-              mainEditedDiv.querySelector(".Order-Note").dataset.note=note;
-
-              let mainOrderFromAll = AllPersonsData.find(el=>el.id==`${orderData.id}`);
-              mainOrderFromAll.name=name;
-              mainOrderFromAll.phone=phone;
-              mainOrderFromAll.city=city;
-              mainOrderFromAll.totalSalary=totalSalary;
-              mainOrderFromAll.netSalary=netSalary;
-              mainOrderFromAll.bankName=bankName;
-              mainOrderFromAll.sector=sector;
-              mainOrderFromAll.Q1=Q1;
-              mainOrderFromAll.Q2=Q2;
-              mainOrderFromAll.Q3=Q3;
-              mainOrderFromAll.note=note;
-              Swal.fire(' تم التعديل ', '', 'success');
+          if(OrderFilesInput.files[0]==undefined){
+            SetData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note);
+          } else {
+            Swal.fire({
+              title: 'Please Wait!',
+              didOpen: () => {
+                Swal.showLoading()
+              }
+            });
+            await uploadFiles(OrderFilesInput).then(ArrayOfOrderFilesLinks=>{
+              SetData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note,ArrayOfOrderFilesLinks);
             })
+            
+          }
 
-          };
-          
+                  
+
+        /* 5 start function to set data */
+        function SetData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note,ArrayOfOrderFilesLinks=""){
+          setDoc(doc(db,"Orders",orderData.id), {
+            ...orderData,
+            name: name,
+            city: city,
+            phone: phone,
+            totalSalary: totalSalary,
+            netSalary: netSalary,
+            bankName: bankName,
+            sector: sector,
+            Q1: Q1,
+            Q2: Q2,
+            Q3: Q3,
+            note: note,
+            isAccepted: orderData.isAccepted,
+            ArrayOfOrderFilesLinks: ArrayOfOrderFilesLinks,
+          }).then(async (e)=>{
+            let mainEditedDiv = document.querySelector(`[data-id="${orderData.id}"]`)
+            mainEditedDiv.querySelector(".Order-Name").textContent=name;
+            mainEditedDiv.querySelector(".Order-Phone").textContent=phone;
+            mainEditedDiv.querySelector(".whatsappLink").href=`http://wa.me/+966${phone}`;
+            mainEditedDiv.querySelector(".Order-City").textContent=city;
+            mainEditedDiv.querySelector(".Toltal-Salary").textContent=totalSalary;
+            mainEditedDiv.querySelector(".Net-Salary").textContent=netSalary;
+            mainEditedDiv.querySelector(".Bank-Name").textContent=bankName;
+            mainEditedDiv.querySelector(".Sector").textContent=sector;
+            mainEditedDiv.querySelector(".Q1").textContent=Q1;
+            mainEditedDiv.querySelector(".Q2").textContent=Q2;
+            mainEditedDiv.querySelector(".Q3").textContent=Q3;
+            mainEditedDiv.querySelector(".Order-Note").dataset.note=note;
+
+            let mainOrderFromAll = AllPersonsData.find(el=>el.id==`${orderData.id}`);
+            mainOrderFromAll.name=name;
+            mainOrderFromAll.phone=phone;
+            mainOrderFromAll.city=city;
+            mainOrderFromAll.totalSalary=totalSalary;
+            mainOrderFromAll.netSalary=netSalary;
+            mainOrderFromAll.bankName=bankName;
+            mainOrderFromAll.sector=sector;
+            mainOrderFromAll.Q1=Q1;
+            mainOrderFromAll.Q2=Q2;
+            mainOrderFromAll.Q3=Q3;
+            mainOrderFromAll.note=note;
+            mainOrderFromAll.ArrayOfOrderFilesLinks=ArrayOfOrderFilesLinks;
+            Swal.fire(' تم التعديل ', '', 'success');
+          })
+
+        };
+        /* 5 end function to set data */      
+   
       };
   });
 
@@ -1177,6 +1237,81 @@ function swool(orderData){
 };
 
 /* 4 end set Orders Accepted and orders archived*/
+
+
+
+
+
+
+
+
+/*  start function to upload files */
+
+async function uploadFiles(input) {
+let ArrayOfOrderFilesLinks = [];
+if(input.files[0]!==undefined){
+
+  
+    for(let i=0; i<input.files.length; i++){
+
+      const ref = firebase.storage().ref();
+      const file =  input.files[i];
+      const name = +new Date() + "-" + file.name;
+      const metadata = {
+        contentType: file.type,
+      };
+      
+      const task = ref.child(name).put(file, metadata);
+      await task
+      .then(async snapshot => snapshot.ref.getDownloadURL())
+      .then(async url => {
+      
+        ArrayOfOrderFilesLinks.push({src: url});
+        
+      })
+      .catch(console.error);
+
+    };
+    
+};
+
+return ArrayOfOrderFilesLinks;
+};
+
+/* end function to upload Files */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1210,10 +1345,10 @@ document.querySelector(".addNewOrder").addEventListener("click",()=>{
             <input type="number" class="addOrderInput"  placeholder="" dir="auto" autocomplete="off" id="phone">
 
             <label for="totalSalary">:اجمالي الراتب</label>
-            <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="totalSalary" value="">
+            <input type="number" class="addOrderInput"  dir="rtl" autocomplete="off" id="totalSalary" value="">
 
             <label for="netSalary">:صافي الراتب</label>
-            <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="netSalary" value="">
+            <input type="number" class="addOrderInput"  dir="rtl" autocomplete="off" id="netSalary" value="">
 
             <label for="bankName">:البنك</label>
             <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="bankName" value="">
@@ -1309,8 +1444,7 @@ document.querySelector(".addNewOrder").addEventListener("click",()=>{
               (sector).trim()!==""&&
               (Q1).trim()!==""&&
               (Q2).trim()!==""&&
-              (Q3).trim()!==""&&
-              (note.trim()!=="")
+              (Q3).trim()!==""
           ){
             AddNewOrder(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note);
           } else {
@@ -1384,7 +1518,7 @@ function showDate(){
   
   let dateNow;
 
-  console.log(hour)
+  // console.log(hour)
 
   if (hour>=12){
     
@@ -1461,7 +1595,7 @@ onSnapshot(colRef,async ()=>{
         }
 
         let data = AA;
-        console.log(data);
+        // console.log(data);
 
         const worksheet = XLSX.utils.json_to_sheet(AA);
         const workbook = XLSX.utils.book_new();

@@ -59,10 +59,10 @@ function swool(){
             <input type="number" placeholder="" dir="auto" autocomplete="off" id="phone">
 
             <label for="totalSalary">:اجمالي الراتب</label>
-            <input type="text" dir="rtl" autocomplete="off" id="totalSalary" value="">
+            <input type="number" dir="rtl" autocomplete="off" id="totalSalary" value="">
 
             <label for="netSalary">:صافي الراتب</label>
-            <input type="text" dir="rtl" autocomplete="off" id="netSalary" value="">
+            <input type="number" dir="rtl" autocomplete="off" id="netSalary" value="">
 
             <label for="bankName">:البنك</label>
             <input type="text" dir="rtl" autocomplete="off" id="bankName" value="">
@@ -159,8 +159,7 @@ function swool(){
                 (sector).trim()!==""&&
                 (Q1).trim()!==""&&
                 (Q2).trim()!==""&&
-                (Q3).trim()!==""&&
-                (note.trim()!=="")
+                (Q3).trim()!==""
             ){
 
                 if((totalSalary).trim()<7000){
