@@ -257,6 +257,7 @@ async function SendData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1
         Q2: Q2,
         Q3: Q3,
         note: note,
+        ArrayOfOrderFilesLinks:[],
 
         date: Date.now(),
         orderDate: showDate(),
