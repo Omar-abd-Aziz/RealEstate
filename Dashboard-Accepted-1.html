@@ -294,6 +294,8 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  const storage = firebase.storage();
+
   let X;
 
   async function getCit(db,X) {
@@ -728,7 +730,6 @@ window.onclick=(e)=>{
 
 
 
-
 /* start remove file btn*/
 if([...e.target.classList].includes("removeFile")){
 
@@ -745,10 +746,23 @@ confirmButtonText: 'Yes'
 
     let orderId=e.target.dataset.orderid;
     let orderData=AllPersonsData.find(el=>el.id==`${orderId}`);
-    
     let ArrayOfOrderFilesLinks=orderData.ArrayOfOrderFilesLinks;
-
     ArrayOfOrderFilesLinks = ArrayOfOrderFilesLinks.filter(obj => obj.src !== e.target.dataset.filesrc);
+
+    let firebaseStorageUrl = e.target.dataset.filesrc
+    let startIndex = firebaseStorageUrl.indexOf('o/') + 2;
+    let endIndex = firebaseStorageUrl.indexOf('?alt=media');
+    let filePathAndName = firebaseStorageUrl.substring(startIndex, endIndex);
+    let fileName = decodeURIComponent(filePathAndName);
+
+
+    var imageRef = storage.ref().child(fileName);
+    // Delete the file
+    imageRef.delete().then(function() {
+      console.log("done")
+    }).catch(function(error) {
+      console.log("error")
+    });
 
     setDoc(doc(db,"Orders",orderId),{
       ...orderData,
@@ -771,8 +785,6 @@ confirmButtonText: 'Yes'
 
 
 /* end remove file btn*/
-
-
 
 
 
