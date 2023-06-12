@@ -65,6 +65,9 @@ function swool(){
 
             <label for="bankName">:البنك</label>
             <select dir="auto" id="bankName" style="font-weight: bold; padding: 5px 5px; width: 98%; margin: auto 10px auto 0px; border: 2px solid black; border-radius: 6px;">
+              <option value=" بنك الراجحي ">
+                بنك الراجحي
+              </option>
               <option value="بنك البلاد">
                 بنك البلاد
               </option>
@@ -88,9 +91,6 @@ function swool(){
               </option>
               <option value=" البنك السعودي للاستثمار ">
                 البنك السعودي للاستثمار
-              </option>
-              <option value=" بنك الراجحي ">
-                بنك الراجحي
               </option>
               <option value=" بنك الجزيرة ">
                 بنك جزيرة
