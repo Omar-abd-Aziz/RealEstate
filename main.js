@@ -161,7 +161,7 @@ function swool(){
                 (Q3).trim()!==""
             ){
 
-                if((totalSalary).trim()=7000){
+                if((totalSalary).trim()<7000){
 
                     Swal.fire({
                         icon: 'error',
