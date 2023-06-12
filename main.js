@@ -161,7 +161,7 @@ function swool(){
                 (Q3).trim()!==""
             ){
 
-                if((totalSalary).trim()<7000){
+                if((netSalary).trim()<7000){
 
                     Swal.fire({
                         icon: 'error',
@@ -169,7 +169,7 @@ function swool(){
                         text: '',
                     })
 
-                } else if((totalSalary).trim()>=7000){
+                } else if((netSalary).trim()>=7000){
 
                     SendData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1,Q2,Q3,note);
 
