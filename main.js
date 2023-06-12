@@ -64,7 +64,44 @@ function swool(){
             <input type="number" dir="rtl" autocomplete="off" id="netSalary" value="">
 
             <label for="bankName">:البنك</label>
-            <input type="text" dir="rtl" autocomplete="off" id="bankName" value="">
+            <select dir="auto" id="bankName" style="font-weight: bold; padding: 5px 5px; width: 98%; margin: auto 10px auto 0px; border: 2px solid black; border-radius: 6px;">
+              <option value="بنك البلاد">
+                بنك البلاد
+              </option>
+              <option value="البنك السعودي الفرنسي">
+                البنك السعودي الفرنسي
+              </option>
+              <option value=" البنك الاهلي ">
+                البنك الاهلي
+              </option>
+              <option value=" بنك الرياض  ">
+                بنك الرياض 
+              </option>
+              <option value=" البنك العربي ">
+                البنك العربي
+              </option>
+              <option value=" بنك ساب  ">
+                بنك ساب 
+              </option>
+              <option value=" البنك الاول ">
+                البنك الاول
+              </option>
+              <option value=" البنك السعودي للاستثمار ">
+                البنك السعودي للاستثمار
+              </option>
+              <option value=" بنك الراجحي ">
+                بنك الراجحي
+              </option>
+              <option value=" بنك الجزيرة ">
+                بنك جزيرة
+              </option>
+              <option value=" مصرف الانماء ">
+                مصرف الانماء
+              </option>
+              <option value=" بنك اخر ">
+                بنك اخر...
+              </option>
+            </select>
 
             <label for="sector">:القطاع</label>
             <select dir="auto" id="sector" name="carlist" form="carform" style="font-weight: bold; padding: 5px 5px; width: 98%; margin: auto 10px auto 0px; border: 2px solid black; border-radius: 6px;">
@@ -161,11 +198,11 @@ function swool(){
                 (Q3).trim()!==""
             ){
 
-                if((netSalary).trim()<7000){
+                if((netSalary).trim()<7000 || (Q3).trim()=="نعم" || (bankName).trim()!=="بنك الراجحي"){
 
                     Swal.fire({
                         icon: 'error',
-                        title: ' عملينا العزيز تم رفض طلبك لان صافي الراتب اقل من 7000 ريال  ',
+                        title: 'عملينا العزيز تم رفض طلبك',
                         text: '',
                     })
 
