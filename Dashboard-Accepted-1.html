@@ -565,7 +565,7 @@ SearchInput=SearchInput.trim();
 
 if(SearchField!==""&&SearchField!=="SearchInput"){
 
-  const q = query(collection(db, "Orders"), where(SearchField, '==', SearchInput));
+  const q = query(collection(db, "Orders"), where("isAccepted", '==', isAccepted), where(SearchField, '==', SearchInput));
 
   const querySnapshot = await getDocs(q);
   const cityList = querySnapshot.docs.map(doc => doc.data());
@@ -929,7 +929,7 @@ if([...e.target.classList].includes("Order-Active-Note")){
 if([...e.target.classList].includes("acceptOrder")){
 
 Swal.fire({
-title: 'Are you Want To Accept It?',
+title: 'هل تريد تحويل الطلب للعملاء؟',
 text: "",
 icon: 'warning',
 showCancelButton: true,
@@ -950,6 +950,41 @@ confirmButtonText: 'Yes, Accept it!'
     e.target.parentNode.parentNode.parentNode.remove();
     AllOrders = AllOrders.filter(obj => obj.id !== orderId);
     AllPersonsData = AllPersonsData.filter(obj => obj.id !== orderId);
+
+
+
+
+
+/* Start Send Whatsapp Message */
+
+let HelloMassage=`
+
+عميلنا العزيز ( ${orderData.name} )
+تم تحويل طلبك للعملاء
+رقم الطلب : ${orderData.orderNumber}
+الرجاء الاحتفاظ بهذه الرسالة
+سعدنا بخدمتك يومك سعيد
+    
+`;
+let country_calling_code = orderData.country_calling_code;
+    
+HelloMassage=HelloMassage.trim();
+let whatappAPI=`https://wa.karzoun.app/api/send?number=${country_calling_code+Number(orderData.phone)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=6485D6EB5C03E&access_token=1757991908`;
+// console.log(whatappAPI);
+
+try {
+  fetch(whatappAPI, { mode: 'no-cors' })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => {
+      console.log("done")
+    });
+} catch (error) {
+  console.log("error")
+}
+    
+/* End Send Whatsapp Message */
+
 
     Swal.fire(
       'Accepted!',
@@ -1030,6 +1065,38 @@ if([...e.target.classList].includes("archiveOrder")){
       e.target.parentNode.parentNode.parentNode.remove();
       AllOrders = AllOrders.filter(obj => obj.id !== orderId);
       AllPersonsData = AllPersonsData.filter(obj => obj.id !== orderId);
+
+
+
+
+/* Start Send Whatsapp Message */
+
+let HelloMassage=`
+
+عميلنا العزيز ( ${orderData.name} )
+تم رفض طلبك
+رقم الطلب : ${orderData.orderNumber}
+سعدنا بخدمتك يومك سعيد
+    
+`;
+let country_calling_code = orderData.country_calling_code;
+    
+HelloMassage=HelloMassage.trim();
+let whatappAPI=`https://wa.karzoun.app/api/send?number=${country_calling_code+Number(orderData.phone)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=6485D6EB5C03E&access_token=1757991908`;
+// console.log(whatappAPI);
+
+try {
+  fetch(whatappAPI, { mode: 'no-cors' })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => {
+      console.log("done")
+    });
+} catch (error) {
+  console.log("error")
+}
+    
+/* End Send Whatsapp Message */
 
       Swal.fire(
         'Archived!',

@@ -559,7 +559,7 @@ SearchInput=SearchInput.trim();
 
 if(SearchField!==""&&SearchField!=="SearchInput"){
 
-  const q = query(collection(db, "Orders"), where(SearchField, '==', SearchInput));
+  const q = query(collection(db, "Orders"), where(SearchField, '==', `${SearchInput}`), where("isAccepted", '==', isAccepted));
 
   const querySnapshot = await getDocs(q);
   const cityList = querySnapshot.docs.map(doc => doc.data());
@@ -603,9 +603,7 @@ async function showData(x){
           <i title="حذف" class="fa-solid fa-trash removeOrder" data-id="${el.id}" style="font-size: 20px; color: white; background: darkred; border-radius: 50%; padding: 6px 8px; cursor: pointer;"></i>
         </a>
 
-        <a>
-          <i title="ارشيف" class="fa-solid fa-folder-open archiveOrder" data-id="${el.id}" style="font-size: 20px; color: white; background: gray; border-radius: 50%; padding: 7px 5px 5px 6px; cursor: pointer;"></i>
-        </a>
+        
 
         <a>
           <i title="تعديل" class="fa-solid fa-pen-to-square editOrder" data-id="${el.id}" style="font-size: 20px; color: #e0dfdf; background: #233245; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
@@ -943,6 +941,40 @@ confirmButtonText: 'Yes, Accept it!'
     e.target.parentNode.parentNode.parentNode.remove();
     AllOrders = AllOrders.filter(obj => obj.id !== orderId);
     AllPersonsData = AllPersonsData.filter(obj => obj.id !== orderId);
+
+
+
+
+/* Start Send Whatsapp Message */
+
+let HelloMassage=`
+
+عميلنا العزيز ( ${orderData.name} )
+تم تحويل طلبك للعملاء  
+رقم الطلب : ${orderData.orderNumber}
+الرجاء الاحتفاظ بهذه الرسالة
+سعدنا بخدمتك يومك سعيد
+    
+`;
+let country_calling_code = orderData.country_calling_code;
+    
+HelloMassage=HelloMassage.trim();
+let whatappAPI=`https://wa.karzoun.app/api/send?number=${country_calling_code+Number(orderData.phone)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=6485D6EB5C03E&access_token=1757991908`;
+// console.log(whatappAPI);
+
+try {
+  fetch(whatappAPI, { mode: 'no-cors' })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => {
+      console.log("done")
+    });
+} catch (error) {
+  console.log("error")
+}
+    
+/* End Send Whatsapp Message */
+
 
     Swal.fire(
       'Accepted!',

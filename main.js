@@ -25,7 +25,6 @@ return cityList;
 
 
 
-
 function idGenerator() {
     var S4 = function() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -220,25 +219,40 @@ async function SendData(name,city,phone,totalSalary,netSalary,bankName,sector,Q1
     let randomOrderNumber = (Math.random()*1000000000).toFixed();
 
 
-    /* Start Send Whatsapp Massage */
 
-//     let HelloMassage=`
+/* Start Send Whatsapp Message */
 
-// عميلنا العزيز ( ${name} )
-// تم استلام طلبك ( ${active} )
-// رقم الطلب : ${randomOrderNumber}
-// الرجاء الاحتفاظ بهذه الرسالة وسوف يقوم فريقنا بالتواصل معك فور التاكد من بيانات طلبك
-// سعدنا بخدمتك يومك سعيد
+let HelloMassage=`
 
-//     `;
+عميلنا العزيز ( ${name} )
+تم استلام طلبك
+رقم الطلب : ${randomOrderNumber}
+الرجاء الاحتفاظ بهذه الرسالة وسوف يقوم فريقنا بالتواصل معك فور التاكد من بيانات طلبك
+سعدنا بخدمتك يومك سعيد
     
-//     HelloMassage=HelloMassage.trim();
-//     let whatappAPI=`https://karzoun.app/api/send.php?number=${country_calling_code.slice(1)+Number(`${phone}`)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=63C2CA489C2CA&access_token=1757991908`;
-//     console.log(whatappAPI);
-    // fetch(whatappAPI);
-
-    /* End Send Whatsapp Massage */
+`;
+country_calling_code = country_calling_code.replace("+", "");
     
+HelloMassage=HelloMassage.trim();
+let whatappAPI=`https://wa.karzoun.app/api/send?number=${country_calling_code+Number(phone)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=6485D6EB5C03E&access_token=1757991908`;
+console.log(whatappAPI);
+    
+try {
+  fetch(whatappAPI, { mode: 'no-cors' })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => {
+      console.log("done")
+    });
+} catch (error) {
+  console.log("error")
+}
+
+/* End Send Whatsapp Message */
+    
+
+
+
 
     
     let id=idGenerator();
@@ -321,68 +335,3 @@ function showDate(){
 
 
 
-
-/* 2 start function to get differnce between data now */
-function getDiffDate(oldDate){
-        
-    var starts = moment(`${oldDate}`);
-    var ends   = moment();
-
-    var duration = moment.duration(ends.diff(starts));
-
-    // with ###moment precise date range plugin###
-    // it will tell you the difference in human terms
-
-    var diff = moment.preciseDiff(starts, ends, true); 
-    // example: { "years": 2, "months": 7, "days": 0, "hours": 6, "minutes": 29, "seconds": 17, "firstDateWasLater":  false }
-
-
-    // or as string:
-    var diffHuman = moment.preciseDiff(starts, ends);
-    // example: 2 years 7 months 6 hours 29 minutes 17 seconds
-
-    let diffDate=diff;
-
-    if(diffDate.years!==0){
-        diffDate={
-            "diffDateNum": diffDate.years,
-            "diffDateName": "سنة",
-        };
-    } else if(diff.months!==0){
-        diffDate={
-            "diffDateNum": diffDate.months,
-            "diffDateName": "شهر",
-        };
-    } else if(diff.days!==0){
-        diffDate={
-            "diffDateNum": diffDate.days,
-            "diffDateName": "يوم",
-        };
-    } else if(diff.hours!==0){
-        diffDate={
-            "diffDateNum": diffDate.hours,
-            "diffDateName": "ساعة",
-        };
-    } else if(diff.minutes!==0){
-        diffDate={
-            "diffDateNum": diffDate.minutes,
-            "diffDateName": "دقيقة",
-        };
-    } else {
-        diffDate={
-            "diffDateNum": 0,
-            "diffDateName": "الان",
-        };
-    }
-
-    let stringDiffDate = `منذ ${diffDate.diffDateNum + " " + diffDate.diffDateName}`;
-    // منذ 1 سنة
-
-    if(diffDate.diffDateName=="الان"){
-      stringDiffDate="الان";
-    }
-    
-    // diffDate => json like {diffDateNum: 1, diffDateName: 'سنة'}
-
-    return stringDiffDate;
-}
