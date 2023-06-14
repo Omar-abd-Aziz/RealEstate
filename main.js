@@ -1,7 +1,7 @@
 window.open('', '_self', '');
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.2/firebase-app.js';
-import { getFirestore, collection, getDocs,getDoc, setDoc, addDoc, doc } from 'https://www.gstatic.com/firebasejs/9.8.2/firebase-firestore.js';
+import { getFirestore, collection, query, where, getDocs,getDoc, setDoc, addDoc, doc,deleteDoc,onSnapshot,orderBy, limit,startAt,endAt } from 'https://www.gstatic.com/firebasejs/9.8.2/firebase-firestore.js';
 
 // TODO: Replace the following with your app's Firebase project configuration
 
@@ -33,12 +33,208 @@ function idGenerator() {
 };
 
 
+let orderId = new URLSearchParams(window.location.search).get('id');
+
+if(orderId!==null&&orderId!==undefined){
+  console.log(orderId)
+  document.querySelector("#simpleBtn").style.display="none";
+
+  sendImportantFiles(orderId);
+} else {
+  swool();
+};
 
 
 
 
 
-swool();
+
+
+
+
+
+
+async function sendImportantFiles(orderId){
+  Swal.fire({
+    title: ' قم بملي البيانات التالية و رفع مستندات تعريف الراتب وتقرير السمه ',
+    html: 
+    `
+    <div class="mainForm" style="overflow-y: hidden; overflow-c: scroll; font-size: 17px!important; font-family: 'Cairo', sans-serif; font-weight: bold!important;">
+
+    <label for="DateOfHiring">:تاريخ التعيين</label>
+    <input type="date" class="addOrderInput" dir="auto" autocomplete="off" id="DateOfHiring" value="">
+
+    <label for="Obligations">:الالتزامات</label>
+    <input type="text" class="addOrderInput"  dir="rtl" autocomplete="off" id="Obligations" value="">
+
+    <label for="LoanType">:نوع القرض</label>
+    <input type="text" class="addOrderInput"  placeholder="" dir="auto" autocomplete="off" id="LoanType" value="">
+
+    <label for="Installment">: القسط</label>
+    <input type="text" class="addOrderInput"  placeholder="" dir="auto" autocomplete="off" id="Installment" value="">
+
+    <label for="RemainingInstallment">:  المتبقي من القسط</label>
+    <input type="text" class="addOrderInput"  placeholder="" dir="auto" autocomplete="off" id="RemainingInstallment" value="">
+
+    <br>
+
+    <label for="OrderFilesInput" class="OrderFilesInputLabel" style="text-align:center; border: 2px solid black;border-radius: 20px;background: green;color: white;padding: 5px 15px;cursor: pointer;">
+    قم برفع رفع مستندات تعريف الراتب وتقرير السمه
+    </label>
+
+    <input data-id="" style="width: 98%; display: none;" class="addOrderInput" accept="" type="file" dir="rtl" autocomplete="off" id="OrderFilesInput" multiple="multiple">
+
+
+    </div>
+    
+    `,
+    confirmButtonText: 'ارسال',
+  })
+  .then(async (result) => {    
+    if (result.isConfirmed) {
+
+      let DateOfHiring = document.querySelector('#DateOfHiring').value;
+      let Obligations = document.querySelector('#Obligations').value;
+      let LoanType = document.querySelector('#LoanType').value;
+      let Installment = document.querySelector('#Installment').value;
+      let RemainingInstallment = document.querySelector('#RemainingInstallment').value;
+      let OrderFilesInput = document.querySelector('#OrderFilesInput');
+
+
+      if
+      (
+        (DateOfHiring).trim()!==""&&
+        (Obligations).trim()!==""&&
+        (LoanType).trim()!==""&&
+        (Installment).trim()!==""&&
+        (RemainingInstallment).trim()!==""
+      ){
+
+        let orderData;
+        await getDocs(query(collection(db, "Orders"), where("orderNumber", '==', orderId))).then(async e=>{
+          orderData=e.docs.map(doc => doc.data());
+          if(orderData.length!==0){
+
+            console.log(orderData[0]);
+
+            Swal.fire({
+              title: 'Please Wait!',
+              didOpen: () => {
+                Swal.showLoading()
+              }
+            });
+
+            await uploadFiles(OrderFilesInput,orderData[0].ArrayOfOrderFilesLinks).then(ArrayOfOrderFilesLinks=>{
+              SetData(orderData[0],DateOfHiring,Obligations,LoanType,Installment,RemainingInstallment,ArrayOfOrderFilesLinks);
+            });
+
+          } else {
+
+            Swal.fire(
+              'عذرا',
+              'لا يمكنك رفع المستندات يجب عليك تسجيل طلب جديد',
+              'error'
+            );
+
+          };
+
+        });
+
+      } else (
+        Swal.fire(
+          ' برجاء كتابة البيانات بشكل صحيح ',
+          '',
+          'error'
+        )
+      )
+
+    };
+  });
+};
+
+
+
+
+
+/* start function to set data after upload files */
+
+async function SetData(orderData,DateOfHiring,Obligations,LoanType,Installment,RemainingInstallment,ArrayOfOrderFilesLinks){
+
+  setDoc(doc(db,"Orders",orderData.id), {
+    ...orderData,
+    DateOfHiring: DateOfHiring,
+    Obligations: Obligations,
+    LoanType: LoanType,
+    Installment: Installment,
+    RemainingInstallment: RemainingInstallment,
+    ArrayOfOrderFilesLinks: ArrayOfOrderFilesLinks,
+  }).then(async (e)=>{
+
+    Swal.fire(
+      'تم رفع الملفات بنجاح سنقوم بالتواصل معك',
+      '',
+      'success'
+    );
+
+  });
+
+};
+
+
+/* end function to set data after upload files */
+
+
+
+ 
+/*  start function to upload files */
+
+async function uploadFiles(input,ArrayOfOrderFilesLinks) {
+
+  console.log(input.files)
+
+
+if(ArrayOfOrderFilesLinks==undefined){
+  ArrayOfOrderFilesLinks=[];
+};
+
+if(input.files[0]!==undefined){
+
+  
+    for(let i=0; i<input.files.length; i++){
+
+      const ref = firebase.storage().ref();
+      const file =  input.files[i];
+      const name = +new Date() + "-" + file.name;
+      const metadata = {
+        contentType: file.type,
+      };
+      
+      const task = ref.child(name).put(file, metadata);
+      await task
+      .then(async snapshot => snapshot.ref.getDownloadURL())
+      .then(async url => {
+      
+        ArrayOfOrderFilesLinks.push({src: url,name: file.name});
+        
+      })
+      .catch(console.error);
+
+    };
+    
+};
+
+return ArrayOfOrderFilesLinks;
+};
+
+/* end function to upload Files */
+
+
+
+
+
+
+
+
 function swool(){
 
     Swal.fire({
@@ -198,7 +394,7 @@ function swool(){
                 (Q3).trim()!==""
             ){
 
-                if((netSalary).trim()<7000 || (Q3).trim()=="نعم" || (bankName).trim()!=="بنك الراجحي"){
+                if((netSalary).trim()<7000 || (Q2).trim()=="نعم" || (Q3).trim()=="نعم"){
 
                     Swal.fire({
                         icon: 'error',
@@ -264,10 +460,14 @@ let HelloMassage=`
 عميلنا العزيز ( ${name} )
 تم استلام طلبك
 رقم الطلب : ${randomOrderNumber}
-الرجاء الاحتفاظ بهذه الرسالة وسوف يقوم فريقنا بالتواصل معك فور التاكد من بيانات طلبك
-سعدنا بخدمتك يومك سعيد
-    
+الرجاء الاحتفاظ بهذه الرسالة سعدنا بخدمتك
 `;
+
+/* 
+برجاء ارفاق المستندات المطلوبة علي الرابط التالي : 
+${window.location.href+"?id="+randomOrderNumber}
+*/
+
 country_calling_code = country_calling_code.replace("+", "");
     
 HelloMassage=HelloMassage.trim();
