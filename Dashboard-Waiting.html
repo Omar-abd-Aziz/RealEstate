@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>الطلبات</title>
+    <title>صفحة الانتظار</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
     <link rel="stylesheet" href="./css/framework.css" />
     <link rel="stylesheet" href="./css/master.css" />
@@ -152,7 +152,7 @@
         <!-- Start Head -->
         <div class="head bg-white between-flex" style="padding: 0px 10px 15px; background: #f1f5f9;">
           <div class="p-relative">
-            <h1 class="p-relative" style="text-align: center;">الطلبات</h1>
+            <h1 class="p-relative" style="text-align: center;">الانتظار</h1>
           </div>
         </div>
         <!-- End Head -->
@@ -307,7 +307,7 @@
 
 
 
-const isAccepted = "Orders-New";
+const isAccepted = "Waiting";
 
 
 
@@ -617,7 +617,7 @@ async function showData(x){
         </a>
 
         <a>
-          <i title="قبول وتحويل للطلبات المقبولة مبدئيا" class="fa-solid fa-check acceptOrder" data-id="${el.id}" style="font-size: 20px; color: white; background: green; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
+          <i title="قبول وتحويل للعملاء" class="fa-solid fa-check acceptOrder" data-id="${el.id}" style="font-size: 20px; color: white; background: green; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
         </a>
 
         <a style="display: none;">
@@ -630,10 +630,6 @@ async function showData(x){
 
         <a>
           <i title="الملفات" class="fa-sharp fa-solid fa-file Order-file" data-id="${el.id}" data-file='${(el.ArrayOfOrderFilesLinks==undefined)?'[]':JSON.stringify(el.ArrayOfOrderFilesLinks)}' style="font-size: 25px; color: #233245; background: white; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
-        </a>
-
-        <a>
-          <i title="قائمة الانتظار" class="fa-sharp fa-solid fa-clock waitOrder" data-id="${el.id}"  style="font-size: 25px; color: darkblue; background: white; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
         </a>
 
 
@@ -724,97 +720,6 @@ document.querySelector(".reports").addEventListener("click",()=>{
 /* 4 Start set Orders Accepted and orders archived*/
 
 window.onclick=(e)=>{
-
-
-
-
-
-
-
-
-/* start waiting order */
-
-if([...e.target.classList].includes("waitOrder")){
-
-Swal.fire({
-title: 'هل تريد تحويل الطلب ل قائمة الانتظار؟',
-text: "",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#3085d6',
-cancelButtonColor: '#d33',
-confirmButtonText: 'Yes'
-}).then(async (result) => {
-  if (result.isConfirmed) {
-
-    let orderId=e.target.dataset.id;
-    let orderData=AllPersonsData.find(el=>el.id==`${orderId}`);
-
-    // console.log(orderData)
-
-    setDoc(doc(db,"Orders",orderId),{
-      ...orderData,
-      isAccepted: "Waiting",
-    });
-
-
-    e.target.parentNode.parentNode.parentNode.remove();
-    AllOrders = AllOrders.filter(obj => obj.id !== orderId);
-    AllPersonsData = AllPersonsData.filter(obj => obj.id !== orderId);
-
-
-
-
-/* Start Send Whatsapp Message */
-
-let HelloMassage=`
-
-عميلنا العزيز ( ${orderData.name} )
-تم تحويل طلبك لقائمة الانتظار
-رقم الطلب : ${orderData.orderNumber}
-الرجاء الاحتفاظ بهذه الرسالة
-سعدنا بخدمتك يومك سعيد
-    
-`;
-let country_calling_code = orderData.country_calling_code;
-    
-HelloMassage=HelloMassage.trim();
-let whatappAPI=`https://wa.karzoun.app/api/send?number=${country_calling_code+Number(orderData.phone)}&type=text&message=${encodeURIComponent(HelloMassage)}&instance_id=6485D6EB5C03E&access_token=1757991908`;
-// console.log(whatappAPI);
-
-try {
-  fetch(whatappAPI, { mode: 'no-cors' })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => {
-      console.log("done")
-    });
-} catch (error) {
-  console.log("error")
-}
-    
-/* End Send Whatsapp Message */
-
-
-
-
-
-    Swal.fire(
-      'done!',
-      'تم التحويل',
-      'success'
-    );
-
-  }
-})
-
-};
-/* end waiting order */
-
-
-
-
-
 
 
 

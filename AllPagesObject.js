@@ -24,6 +24,12 @@ let AllPagesObject = [
   iconStyle: "color: green;",
 },
 {
+  name: "الانتظار",
+  link: "./Dashboard-Waiting.html",
+  iconClass: "fa-sharp fa-regular fa-clock",
+  iconStyle: "color: darkblue;",
+},
+{
   name: "الطلبات المرفوضة",
   link: "./Dashboard-Archived.html",
   iconClass: "fa-solid fa-folder-open fa-fw",
@@ -44,6 +50,14 @@ AllPagesObject.forEach(e=>{
   `
 });
 
+
+/* logo code */
+document.querySelector(".HelloDiv").innerHTML=`
+
+<img src="./imgs/logo.png" style="width: 100px;border-radius: 20px;display: flex;margin: 20px auto;" alt="image description">
+
+<h2>Hello <span id="AdminName" style="color: #397eaf">admin..</span></h2>
+`;
 
 
 
