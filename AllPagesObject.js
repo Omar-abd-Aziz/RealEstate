@@ -35,8 +35,31 @@ let AllPagesObject = [
   iconClass: "fa-solid fa-folder-open fa-fw",
   iconStyle: "color: gray;",
 },
+];
 
-]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 document.querySelector(".AllPagesBtns").innerHTML=""
 AllPagesObject.forEach(e=>{
