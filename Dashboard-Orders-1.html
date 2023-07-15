@@ -332,11 +332,12 @@ let AllOrders;
 
 async function forAllOrders(X){
 
-  const q = query(collection(db, "Orders"), where('isAccepted', '==', isAccepted), orderBy("date","desc"), limit(X||20));
+  const q = query(collection(db, "Orders"), where('orderByUserId', '==', mainPersonData.id), orderBy("date","desc"), limit(X||20));
   const querySnapshot = await getDocs(q);
   const cityList = querySnapshot.docs.map(doc => doc.data());
 
   AllOrders=cityList;
+  console.log(AllOrders,mainPersonData.id);
 
   return AllOrders;
 };
@@ -370,7 +371,7 @@ async function getUserDataWithId(id){
 /* 04 start check and get user doc */
 
 let mainPersonData;
-let docId = await localStorage.getItem("doc-digital-id");
+let docId = await localStorage.getItem("doc-hlol-id");
 
 if(docId!==null&&docId.trim()!==''){
     // document.querySelector('.profile-btn').dataset.personid=docId;
@@ -391,7 +392,7 @@ if(docId!==null&&docId.trim()!==''){
 
 document.querySelector("#logOut-digital").addEventListener("click",()=>{
 
-  localStorage.setItem("doc-digital-id","");
+  localStorage.setItem("doc-hlol-id","");
   location.href="./login/login.html";
 
 });
@@ -563,7 +564,7 @@ SearchInput=SearchInput.trim();
 
 if(SearchField!==""&&SearchField!=="SearchInput"){
 
-  const q = query(collection(db, "Orders"), where("isAccepted", '==', isAccepted), where(SearchField, '==', SearchInput));
+  const q = query(collection(db, "Orders"), where("getUserDataWithId", '==', mainPersonData.id), where(SearchField, '==', SearchInput));
 
   const querySnapshot = await getDocs(q);
   const cityList = querySnapshot.docs.map(doc => doc.data());
@@ -667,7 +668,7 @@ document.querySelector(".reports").addEventListener("click",()=>{
     DateStarts = new Date(DateStarts).getTime();
     DateEnds = new Date(DateEnds).getTime();
 
-    const q = query(collection(db, "Orders"), where("isAccepted", "==", isAccepted), where("date", ">", DateStarts), where("date", "<", DateEnds), orderBy("date","desc"));
+    const q = query(collection(db, "Orders"), where("date", ">", DateStarts), where("date", "<", DateEnds), orderBy("date","desc"));
     const querySnapshot = await getDocs(q);
     const cityList = querySnapshot.docs.map(doc => doc.data());
 
@@ -1787,7 +1788,7 @@ getAllOrders();
 
 onSnapshot(colRef,async ()=>{
 
-  let q = query(collection(db, "Orders"), where('isAccepted', '==', isAccepted), where('date', '>', (AllOrders[0]!==undefined)?AllOrders[0].date:0), orderBy("date","desc"), limit(X||20));
+  let q = query(collection(db, "Orders"), where('orderByUserId', '==', mainPersonData.id), where('date', '>', (AllOrders[0]!==undefined)?AllOrders[0].date:0), orderBy("date","desc"), limit(X||20));
   let querySnapshot = await getDocs(q);
   let cityList = querySnapshot.docs.map(doc => doc.data());
 

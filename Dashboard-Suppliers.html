@@ -241,13 +241,13 @@ async function getUserDataWithId(id){
 /* 02 start check and get user doc */
 
 let mainPersonData;
-let docId = await localStorage.getItem("doc-digital-id");
+let docId = await localStorage.getItem("doc-hlol-id");
 
 if(docId!==null&&docId.trim()!==''){
     
     mainPersonData=await getUserDataWithId(docId);
 
-    if(mainPersonData.isAdmin==false){
+    if(mainPersonData.isAdmin=="admin-1"){
       location.href="./Dashboard-notAdmin.html";
     };
 
@@ -268,7 +268,7 @@ if(docId!==null&&docId.trim()!==''){
 
 document.querySelector("#logOut-digital").addEventListener("click",()=>{
 
-  localStorage.setItem("doc-digital-id","");
+  localStorage.setItem("doc-hlol-id","");
   location.href="./login/login.html";
 
 });
@@ -373,11 +373,11 @@ async function getAllSuppliers(){
             return a.date - b.date;
         });
   
-       
-        AllSuppliers=AllSuppliers.filter(el=>el.isAdmin==false);
+     
+        AllSuppliers=AllSuppliers.filter(el=>el.isAdmin=="admin-1");
 
         
-        document.querySelector(".NumberOfOrders").innerHTML="";
+        // document.querySelector(".NumberOfOrders").innerHTML="";
   
 
         if(AllSuppliers.length!==0){
@@ -397,12 +397,16 @@ async function getAllSuppliers(){
                         <i title="حذف" class="fa-solid fa-trash removeSupplier" data-id="${el.id}" style="font-size: 20px; color: white; background: darkred; border-radius: 50%; padding: 6px 8px; cursor: pointer;"></i>
                       </a>
   
-                      <a>
+                      <a style="display: none;">
                         <i title="تعديل" class="fa-solid fa-pen-to-square editSupplier" data-id="${el.id}" style="font-size: 20px; color: #e0dfdf; background: #233245; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
                       </a>
   
                       <a href="http://wa.me/${Number(el.phone)}" target="_blank">
                         <i title="واتساب" class="fa-brands fa-whatsapp" style="font-size: 20px; color: white; background: green; border-radius: 50%; padding: 4px 5px; cursor: pointer;"></i>
+                      </a>
+
+                      <a>
+                        <i title="لينك الفورم لهذا المندوب" class="fa-solid fa-copy copyLinkForSupplier" data-id="${el.id}" style="font-size: 20px; color: #e0dfdf; background: #233245; border-radius: 50%; padding: 5px 5px; cursor: pointer;"></i>
                       </a>
                       
                     </td>
@@ -436,6 +440,24 @@ async function getAllSuppliers(){
 /* 4 Start window onclick*/
 
 window.onclick=(e)=>{
+
+
+if([...e.target.classList].includes("copyLinkForSupplier")){
+    let supplierId=e.target.dataset.id;
+    let supplierDate=AllAccounts.find(el=>el.id==`${supplierId}`);
+
+    let url = location.host+`?Sid=${supplierId}&name=${supplierDate.name}`;
+
+    let x = document.createElement('textarea');
+    x.value=url;
+    document.body.appendChild(x);
+    x.select();
+    x.setSelectionRange(0,99999);
+    document.execCommand("copy");
+    document.body.removeChild(x);
+    Swal.fire("تم نسخ اللينك","","success");
+}
+
 
 
 
@@ -495,6 +517,7 @@ if([...e.target.classList].includes("editSupplier")){
 
 
 function swool(supplierData){
+  
   
   Swal.fire({
       title: 'قم بتعديل البيانات التالية',
@@ -639,7 +662,7 @@ document.querySelector(".addNewOrder").addEventListener("click",()=>{
               return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
             };
   
-            let id = idGenerator();
+            let id = (Math.random()*1000000).toFixed();
   
             AddNewSupplier(name,phone,city,username,password,id);
 
@@ -652,9 +675,9 @@ document.querySelector(".addNewOrder").addEventListener("click",()=>{
 
 
           function AddNewSupplier(name,phone,city,username,password,id){
-            let randomSupplierNumber = (Math.random()*1000000).toFixed();
+            let randomSupplierNumber = id;
             setDoc(doc(db,"accounts",id), {
-              isAdmin: false,
+              isAdmin: "admin-1",
               id: id,
               name: name,
               phone: phone,

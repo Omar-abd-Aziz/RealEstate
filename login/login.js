@@ -48,7 +48,7 @@ document.querySelector(".btn-sign-in").addEventListener("click",async()=>{
                 document.querySelector(".username-in").value=""
                 document.querySelector(".password-in").value=""
                 /**/
-                localStorage.setItem("doc-digital-id",doc.data().id);
+                localStorage.setItem("doc-hlol-id",doc.data().id);
                 /**/
                 location.href="../Dashboard-Orders.html"
             } else {

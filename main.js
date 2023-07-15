@@ -489,6 +489,9 @@ try {
     
 
 
+    
+    let orderByUserId = new URLSearchParams(window.location.search).get('Sid');
+    let orderByUser = new URLSearchParams(window.location.search).get('name');
 
 
     
@@ -509,7 +512,8 @@ try {
         Q3: Q3,
         note: note,
         ArrayOfOrderFilesLinks:[],
-
+        orderByUser: orderByUser||"المكتب",
+        orderByUserId: orderByUserId||"المكتب",
         date: Date.now(),
         orderDate: showDate(),
         orderNumber: randomOrderNumber,

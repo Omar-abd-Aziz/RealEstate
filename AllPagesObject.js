@@ -35,6 +35,12 @@ let AllPagesObject = [
   iconClass: "fa-solid fa-folder-open fa-fw",
   iconStyle: "color: gray;",
 },
+{
+  name: "المناديب",
+  link: "./Dashboard-Suppliers.html",
+  iconClass: "fa-solid fa-person fa-fw",
+  iconStyle: "color: gray;",
+},
 ];
 
 

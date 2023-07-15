@@ -367,7 +367,7 @@ async function getUserDataWithId(id){
 /* 04 start check and get user doc */
 
 let mainPersonData;
-let docId = await localStorage.getItem("doc-digital-id");
+let docId = await localStorage.getItem("doc-hlol-id");
 
 if(docId!==null&&docId.trim()!==''){
     // document.querySelector('.profile-btn').dataset.personid=docId;
@@ -390,7 +390,7 @@ if(docId!==null&&docId.trim()!==''){
 
 document.querySelector("#logOut-digital").addEventListener("click",()=>{
 
-  localStorage.setItem("doc-digital-id","");
+  localStorage.setItem("doc-hlol-id","");
   location.href="./login/login.html";
 
 });
